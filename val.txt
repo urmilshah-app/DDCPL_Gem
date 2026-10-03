@@ -1,0 +1,134 @@
+﻿Prisma schema loaded from prisma\schema.prisma
+prisma.cmd : 
+At line:1 char:111
++ ... $($c[-1])"; & "D:\Gem_Website\node_modules\.bin\prisma.cmd" validate  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Error: Prisma schema validation - (validate wasm)
+Error code: P1012
+[1;91merror[0m: [1mError validating field `tenders` in model `User`: The relation field `tenders` on model `User` 
+is missing an opposite relation field on the model `Tender`. Either run `prisma format` or add it manually.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:137[0m
+[1;94m   | [0m
+[1;94m136 | [0m  savedSearches        SavedSearch[]
+[1;94m137 | [0m  [1;91mtenders              Tender[][0m
+[1;94m138 | [0m  userNotes            UserNote[]
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating field `negativeKeywords` in model `Keyword`: The relation field 
+`negativeKeywords` on model `Keyword` is missing an opposite relation field on the model `NegativeKeyword`. Either run 
+`prisma format` or add it manually.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:277[0m
+[1;94m   | [0m
+[1;94m276 | [0m  matches     TenderMatch[]          @relation("TenderMatchKeyword")
+[1;94m277 | [0m  [1;91mnegativeKeywords NegativeKeyword[][0m
+[1;94m278 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating field `tenderLocations` in model `State`: The relation field `tenderLocations` 
+on model `State` is missing an opposite relation field on the model `StateLoc`. Either run `prisma format` or add it 
+manually.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:307[0m
+[1;94m   | [0m
+[1;94m306 | [0m  cities             City[]
+[1;94m307 | [0m  [1;91mtenderLocations    StateLoc[]     @relation("StateLocState")[0m
+[1;94m308 | [0m  watchlistLocations WatchlistLocation[]
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating field `tenderCities` in model `State`: The relation field `tenderCities` on 
+model `State` is missing an opposite relation field on the model `City`. Either run `prisma format` or add it 
+manually.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:309[0m
+[1;94m   | [0m
+[1;94m308 | [0m  watchlistLocations WatchlistLocation[]
+[1;94m309 | [0m  [1;91mtenderCities       City[]         @relation("TenderStateRel") // optional[0m
+[1;94m310 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating field `state` in model `StateLoc`: The relation field `state` on model 
+`StateLoc` is missing an opposite relation field on the model `State`. Either run `prisma format` or add it 
+manually.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:339[0m
+[1;94m   | [0m
+[1;94m338 | [0m
+[1;94m339 | [0m  [1;91mstate        State            @relation(fields: [stateId], references: [id], onDelete: 
+Cascade)[0m
+[1;94m340 | [0m  stateLocCities StateLocCity[]
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating field `createdByUser` in model `Tender`: The relation field `createdByUser` on 
+model `Tender` is missing an opposite relation field on the model `User`. Either run `prisma format` or add it 
+manually.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:409[0m
+[1;94m   | [0m
+[1;94m408 | [0m
+[1;94m409 | [0m  [1;91mcreatedByUser   User?       @relation("TenderCreatedBy", fields: [createdBy], references: 
+[id])[0m
+[1;94m410 | [0m  categories      TenderCategory[]
+[1;94m   | [0m
+[1;91merror[0m: [1mError parsing attribute "@relation": The relation field `categoryRel` on Model `Tender` must 
+specify the `fields` argument in the @relation attribute. You can run `prisma format` to fix this automatically.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:419[0m
+[1;94m   | [0m
+[1;94m418 | [0m  notificationLogs NotificationLog[]
+[1;94m419 | [0m  [1;91mcategoryRel     Category?   @relation("CategoryTenders", fields: [], references: [])[0m
+[1;94m420 | [0m  cityRel         City?       @relation("TenderCityRel", fields: [consigneeCity], references: [name])
+[1;94m   | [0m
+[1;91merror[0m: [1mError parsing attribute "@relation": The relation field `categoryRel` on Model `Tender` must 
+specify the `references` argument in the @relation attribute.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:419[0m
+[1;94m   | [0m
+[1;94m418 | [0m  notificationLogs NotificationLog[]
+[1;94m419 | [0m  [1;91mcategoryRel     Category?   @relation("CategoryTenders", fields: [], references: [])[0m
+[1;94m420 | [0m  cityRel         City?       @relation("TenderCityRel", fields: [consigneeCity], references: [name])
+[1;94m   | [0m
+[1;91merror[0m: [1mError parsing attribute "@relation": The argument `references` must refer to a unique criterion 
+in the related model. Consider adding an `@unique` attribute to the field `name` in the model `City`.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:420[0m
+[1;94m   | [0m
+[1;94m419 | [0m  categoryRel     Category?   @relation("CategoryTenders", fields: [], references: [])
+[1;94m420 | [0m  [1;91mcityRel         City?       @relation("TenderCityRel", fields: [consigneeCity], references: 
+[name])[0m
+[1;94m421 | [0m  stateRel        State?      @relation(fields: [stateCode], references: [code])
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating field `stateRel` in model `Tender`: The relation field `stateRel` on model 
+`Tender` is missing an opposite relation field on the model `State`. Either run `prisma format` or add it manually.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:421[0m
+[1;94m   | [0m
+[1;94m420 | [0m  cityRel         City?       @relation("TenderCityRel", fields: [consigneeCity], references: [name])
+[1;94m421 | [0m  [1;91mstateRel        State?      @relation(fields: [stateCode], references: [code])[0m
+[1;94m422 | [0m  watchlistLocs   WatchlistLocation[]
+[1;94m   | [0m
+[1;91merror[0m: [1mError validating field `watchlistLocs` in model `Tender`: The relation field `watchlistLocs` on 
+model `Tender` is missing an opposite relation field on the model `WatchlistLocation`. Either run `prisma format` or 
+add it manually.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:422[0m
+[1;94m   | [0m
+[1;94m421 | [0m  stateRel        State?      @relation(fields: [stateCode], references: [code])
+[1;94m422 | [0m  [1;91mwatchlistLocs   WatchlistLocation[][0m
+[1;94m423 | [0m
+[1;94m   | [0m
+[1;91merror[0m: [1mError parsing attribute "@relation": The given constraint name `TenderMatch_keywordId_fkey` has 
+to be unique in the following namespace: on model `TenderMatch` for primary key, indexes, unique constraints and 
+foreign keys. Please provide a different name using the `map` argument.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:460[0m
+[1;94m   | [0m
+[1;94m459 | [0m  watchlist  Watchlist? @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+[1;94m460 | [0m  [1;91mkeywordRel Keyword? @relation("TenderMatchKeyword", fields: [keywordId], references: [id], 
+onDelete: Cascade)[0m
+[1;94m461 | [0m  negativeRel NegativeKeyword? @relation("TenderMatchNegativeKeyword", fields: [keywordId], 
+references: [id])
+[1;94m   | [0m
+[1;91merror[0m: [1mError parsing attribute "@relation": The given constraint name `TenderMatch_keywordId_fkey` has 
+to be unique in the following namespace: on model `TenderMatch` for primary key, indexes, unique constraints and 
+foreign keys. Please provide a different name using the `map` argument.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:461[0m
+[1;94m   | [0m
+[1;94m460 | [0m  keywordRel Keyword? @relation("TenderMatchKeyword", fields: [keywordId], references: [id], 
+onDelete: Cascade)
+[1;94m461 | [0m  [1;91mnegativeRel NegativeKeyword? @relation("TenderMatchNegativeKeyword", fields: [keywordId], 
+references: [id])[0m
+[1;94m462 | [0m
+[1;94m   | [0m
+
+Validation Error Count: 13
+[Context: validate]
+
+Prisma CLI Version : 5.22.0

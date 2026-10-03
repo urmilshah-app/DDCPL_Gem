@@ -1,0 +1,33 @@
+# ---------------------------------------------------------------------------
+# Worker Dockerfile for DDCPL Tender Monitor
+# Runs the scheduled scan worker (tsx scripts/worker.ts)
+# ---------------------------------------------------------------------------
+
+FROM node:20-alpine AS base
+WORKDIR /app
+RUN apk add --no-cache openssl libc6-compat
+
+FROM base AS deps
+COPY package.json package-lock.json* ./
+# schema must exist before npm ci: package.json has "postinstall": "prisma generate"
+COPY prisma/schema.prisma ./prisma/schema.prisma
+RUN npm ci --legacy-peer-deps
+
+FROM base AS runner
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 nextjs
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY --chown=nextjs:nodejs package.json tsconfig.json ./
+COPY --chown=nextjs:nodejs prisma ./prisma
+COPY --chown=nextjs:nodejs scripts ./scripts
+COPY --chown=nextjs:nodejs src ./src
+
+RUN npx prisma generate
+
+USER nextjs
+
+CMD ["npx", "tsx", "scripts/worker.ts"]

@@ -1,0 +1,100 @@
+﻿Prisma schema loaded from prisma\schema.prisma
+System.Management.Automation.RemoteException
+Error: Prisma schema validation - (validate wasm)
+Error code: P1012
+error: Error validating field `tenders` in model `User`: The relation field `tenders` on model `User` is missing an opposite relation field on the model `Tender`. Either run `prisma format` or add it manually.
+  -->  prisma\schema.prisma:137
+   | 
+136 |   savedSearches        SavedSearch[]
+137 |   tenders              Tender[]
+138 |   userNotes            UserNote[]
+   | 
+error: Error validating field `negativeKeywords` in model `Keyword`: The relation field `negativeKeywords` on model `Keyword` is missing an opposite relation field on the model `NegativeKeyword`. Either run `prisma format` or add it manually.
+  -->  prisma\schema.prisma:277
+   | 
+276 |   matches     TenderMatch[]          @relation("TenderMatchKeyword")
+277 |   negativeKeywords NegativeKeyword[]
+278 | 
+   | 
+error: Error validating field `tenderLocations` in model `State`: The relation field `tenderLocations` on model `State` is missing an opposite relation field on the model `StateLoc`. Either run `prisma format` or add it manually.
+  -->  prisma\schema.prisma:307
+   | 
+306 |   cities             City[]
+307 |   tenderLocations    StateLoc[]     @relation("StateLocState")
+308 |   watchlistLocations WatchlistLocation[]
+   | 
+error: Error validating field `tenderCities` in model `State`: The relation field `tenderCities` on model `State` is missing an opposite relation field on the model `City`. Either run `prisma format` or add it manually.
+  -->  prisma\schema.prisma:309
+   | 
+308 |   watchlistLocations WatchlistLocation[]
+309 |   tenderCities       City[]         @relation("TenderStateRel") // optional
+310 | 
+   | 
+error: Error validating field `state` in model `StateLoc`: The relation field `state` on model `StateLoc` is missing an opposite relation field on the model `State`. Either run `prisma format` or add it manually.
+  -->  prisma\schema.prisma:339
+   | 
+338 | 
+339 |   state        State            @relation(fields: [stateId], references: [id], onDelete: Cascade)
+340 |   stateLocCities StateLocCity[]
+   | 
+error: Error validating field `createdByUser` in model `Tender`: The relation field `createdByUser` on model `Tender` is missing an opposite relation field on the model `User`. Either run `prisma format` or add it manually.
+  -->  prisma\schema.prisma:409
+   | 
+408 | 
+409 |   createdByUser   User?       @relation("TenderCreatedBy", fields: [createdBy], references: [id])
+410 |   categories      TenderCategory[]
+   | 
+error: Error parsing attribute "@relation": The relation field `categoryRel` on Model `Tender` must specify the `fields` argument in the @relation attribute. You can run `prisma format` to fix this automatically.
+  -->  prisma\schema.prisma:419
+   | 
+418 |   notificationLogs NotificationLog[]
+419 |   categoryRel     Category?   @relation("CategoryTenders", fields: [], references: [])
+420 |   cityRel         City?       @relation("TenderCityRel", fields: [consigneeCity], references: [name])
+   | 
+error: Error parsing attribute "@relation": The relation field `categoryRel` on Model `Tender` must specify the `references` argument in the @relation attribute.
+  -->  prisma\schema.prisma:419
+   | 
+418 |   notificationLogs NotificationLog[]
+419 |   categoryRel     Category?   @relation("CategoryTenders", fields: [], references: [])
+420 |   cityRel         City?       @relation("TenderCityRel", fields: [consigneeCity], references: [name])
+   | 
+error: Error parsing attribute "@relation": The argument `references` must refer to a unique criterion in the related model. Consider adding an `@unique` attribute to the field `name` in the model `City`.
+  -->  prisma\schema.prisma:420
+   | 
+419 |   categoryRel     Category?   @relation("CategoryTenders", fields: [], references: [])
+420 |   cityRel         City?       @relation("TenderCityRel", fields: [consigneeCity], references: [name])
+421 |   stateRel        State?      @relation(fields: [stateCode], references: [code])
+   | 
+error: Error validating field `stateRel` in model `Tender`: The relation field `stateRel` on model `Tender` is missing an opposite relation field on the model `State`. Either run `prisma format` or add it manually.
+  -->  prisma\schema.prisma:421
+   | 
+420 |   cityRel         City?       @relation("TenderCityRel", fields: [consigneeCity], references: [name])
+421 |   stateRel        State?      @relation(fields: [stateCode], references: [code])
+422 |   watchlistLocs   WatchlistLocation[]
+   | 
+error: Error validating field `watchlistLocs` in model `Tender`: The relation field `watchlistLocs` on model `Tender` is missing an opposite relation field on the model `WatchlistLocation`. Either run `prisma format` or add it manually.
+  -->  prisma\schema.prisma:422
+   | 
+421 |   stateRel        State?      @relation(fields: [stateCode], references: [code])
+422 |   watchlistLocs   WatchlistLocation[]
+423 | 
+   | 
+error: Error parsing attribute "@relation": The given constraint name `TenderMatch_keywordId_fkey` has to be unique in the following namespace: on model `TenderMatch` for primary key, indexes, unique constraints and foreign keys. Please provide a different name using the `map` argument.
+  -->  prisma\schema.prisma:460
+   | 
+459 |   watchlist  Watchlist? @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+460 |   keywordRel Keyword? @relation("TenderMatchKeyword", fields: [keywordId], references: [id], onDelete: Cascade)
+461 |   negativeRel NegativeKeyword? @relation("TenderMatchNegativeKeyword", fields: [keywordId], references: [id])
+   | 
+error: Error parsing attribute "@relation": The given constraint name `TenderMatch_keywordId_fkey` has to be unique in the following namespace: on model `TenderMatch` for primary key, indexes, unique constraints and foreign keys. Please provide a different name using the `map` argument.
+  -->  prisma\schema.prisma:461
+   | 
+460 |   keywordRel Keyword? @relation("TenderMatchKeyword", fields: [keywordId], references: [id], onDelete: Cascade)
+461 |   negativeRel NegativeKeyword? @relation("TenderMatchNegativeKeyword", fields: [keywordId], references: [id])
+462 | 
+   | 
+System.Management.Automation.RemoteException
+Validation Error Count: 13
+[Context: validate]
+System.Management.Automation.RemoteException
+Prisma CLI Version : 5.22.0

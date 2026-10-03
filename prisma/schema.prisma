@@ -1,0 +1,700 @@
+// ===========================================================================
+// GeM Tender Alert & Monitoring System ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Prisma schema (PostgreSQL)
+// ===========================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum NotifyChannel {
+  EMAIL
+  BROWSER
+  TELEGRAM
+  WHATSAPP
+}
+
+enum NotifyStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+  DISABLED
+}
+
+enum TenderStatus {
+  NEW
+  VIEWED
+  SHORTLISTED
+  IGNORED
+  EXPIRED
+  UPDATED
+  CLOSED
+}
+
+enum WorkflowStatus {
+  UNDER_REVIEW
+  NEED_PRICING
+  NEED_OEM_QUOTE
+  READY_FOR_SUBMISSION
+  SUBMITTED
+  NOT_RELEVANT
+  REJECTED
+  CLOSED
+}
+
+enum MatchKind {
+  EXACT
+  PHRASE
+  CONTAINS
+  NORMALIZED
+  SYNONYM
+  NEGATIVE
+}
+
+enum LocationMatchType {
+  EXACT_CITY
+  STATE_MATCH
+  ADDRESS_MATCH
+  NO_MATCH
+  UNKNOWN
+}
+
+enum ScanTrigger {
+  SCHEDULED
+  MANUAL
+  STARTUP
+  DEMO
+}
+
+enum JobStatus {
+  IDLE
+  RUNNING
+  DONE
+  FAILED
+  SKIPPED
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+}
+
+enum UpdateKind {
+  CREATED
+  DETAILS_CHANGED
+  CORRIGENDUM
+  DEADLINE_CHANGED
+  ESTIMATED_VALUE_CHANGED
+  EXPIRED
+  CLOSED
+}
+
+// ---------------------------------------------------------------------------
+// Identity & access
+// ---------------------------------------------------------------------------
+
+model User {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  passwordHash     String
+  name             String
+  role             Role     @default(USER)
+  businessName     String?
+  phone            String?
+  notificationEmail String?
+  isActive         Boolean  @default(true)
+  onboarded        Boolean  @default(false)
+  lastLoginAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  watchlists           Watchlist[]
+  sessions             Session[]
+  savedSearches        SavedSearch[]
+  userNotes            UserNote[]
+  tenderStars          TenderStar[]
+  notifications        Notification[]
+  notificationLogs  NotificationLog[]
+  notificationSettings NotificationSetting[]
+  auditLogs            AuditLog[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ---------------------------------------------------------------------------
+// Watchlists & saved searches
+// ---------------------------------------------------------------------------
+
+model Watchlist {
+  id             String   @id @default(cuid())
+  name           String
+  userId         String
+  description    String?
+  isDefault      Boolean  @default(false)
+  isActive       Boolean  @default(true)
+  notifyEmail    Boolean  @default(true)
+  notifyBrowser  Boolean  @default(true)
+  notifyTelegram Boolean  @default(false)
+  notifyWhatsapp Boolean  @default(false)
+  alert24h       Boolean  @default(false)
+  alert12h       Boolean  @default(false)
+  alert3h        Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  watchlistKeyword WatchlistKeyword[]
+  watchlistLocation WatchlistLocation[]
+  matches          TenderMatch[]
+
+  @@index([userId])
+  @@unique([userId, name])
+}
+
+model WatchlistKeyword {
+  id          String   @id @default(cuid())
+  watchlistId String
+  keywordId   String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  watchlist Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  keyword   Keyword   @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+
+  @@index([watchlistId])
+  @@index([keywordId])
+  @@unique([watchlistId, keywordId])
+}
+
+model WatchlistLocation {
+  id          String   @id @default(cuid())
+  watchlistId String
+  mode        String   @default("ALL_INDIA")
+  stateId     String?
+  cityId      String?
+  createdAt   DateTime @default(now())
+
+  watchlist Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  state     State?    @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  city      City?     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+
+  @@index([watchlistId])
+  @@index([stateId])
+  @@index([cityId])
+}
+
+model SavedSearch {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  config      Json
+  notify      Boolean  @default(true)
+  lastRunAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------------
+// Categories & keywords
+// ---------------------------------------------------------------------------
+
+model Category {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  keywords         Keyword[]
+  negativeKeywords NegativeKeyword[]
+  tenderCategories TenderCategory[]
+
+  @@index([isActive])
+}
+
+model Keyword {
+  id          String   @id @default(cuid())
+  categoryId  String?
+  keyword     String   @unique
+  synonyms    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category          Category?         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  watchlistKeywords WatchlistKeyword[]
+  matches           TenderMatch[]
+
+  @@index([categoryId])
+}
+
+model NegativeKeyword {
+  id          String    @id @default(cuid())
+  keyword     String
+  categoryId  String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+  @@index([keyword])
+}
+
+// ---------------------------------------------------------------------------
+// Solution Classification
+// ---------------------------------------------------------------------------
+
+model SolutionCategory {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String?
+  icon            String?
+  color           String?
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  parentId        String?
+  parent          SolutionCategory? @relation("SolutionHierarchy", fields: [parentId], references: [id])
+  children        SolutionCategory[] @relation("SolutionHierarchy")
+  keywords        SolutionKeyword[]
+  tenders         TenderSolution[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([parentId])
+}
+
+model SolutionKeyword {
+  id              String   @id @default(cuid())
+  solutionId      String
+  keyword         String
+  weight          Float    @default(1.0)
+  matchType       String   @default("CONTAINS") // EXACT, PHRASE, CONTAINS, FUZZY
+  isNegative      Boolean  @default(false)
+  synonyms        String?
+  minConfidence   Float    @default(0.5)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  solution SolutionCategory @relation(fields: [solutionId], references: [id], onDelete: Cascade)
+
+  @@unique([solutionId, keyword])
+  @@index([solutionId])
+}
+
+model TenderSolution {
+  id              String          @id @default(cuid())
+  tenderId        String
+  solutionId      String
+  confidence      Float           @default(1.0)
+  matchedKeywords String[]
+  detectedAt      DateTime        @default(now())
+  detectedBy      String          @default("AUTO") // AUTO, MANUAL
+
+  tender    Tender         @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  solution  SolutionCategory @relation(fields: [solutionId], references: [id], onDelete: Cascade)
+
+  @@unique([tenderId, solutionId])
+  @@index([tenderId])
+  @@index([solutionId])
+}
+
+// ---------------------------------------------------------------------------
+// Geography
+// ---------------------------------------------------------------------------
+
+model State {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  shortName String?
+  createdAt DateTime @default(now())
+
+  cities             City[]
+  locations          StateLoc[]
+  watchlistLocations WatchlistLocation[]
+
+  @@index([name])
+}
+
+model City {
+  id          String   @id @default(cuid())
+  stateId     String
+  name        String
+  normalized  String
+  isCapital   Boolean  @default(false)
+  lat         Decimal? @db.Decimal(9, 6)
+  lng         Decimal? @db.Decimal(9, 6)
+  createdAt   DateTime @default(now())
+
+  state   State    @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  stateLocCities     StateLocCity[]
+  watchlistLocations WatchlistLocation[]
+
+  @@unique([stateId, name])
+  @@index([normalized])
+}
+
+model StateLoc {
+  id        String   @id @default(cuid())
+  stateId   String
+  mode      String   @default("STATE")
+  createdAt DateTime @default(now())
+
+  state        State            @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  stateLocCities StateLocCity[]
+
+  @@unique([stateId])
+}
+
+model StateLocCity {
+  id         String   @id @default(cuid())
+  stateLocId String
+  cityId     String
+  maxRadius  Int?     @default(50)
+
+  stateLoc StateLoc @relation(fields: [stateLocId], references: [id], onDelete: Cascade)
+  city    City     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+
+  @@unique([stateLocId, cityId])
+  @@index([cityId])
+}
+
+// ---------------------------------------------------------------------------
+// Tenders
+// ---------------------------------------------------------------------------
+
+model Tender {
+  id               String   @id @default(cuid())
+  bidNumber        String   @unique
+  raNumber         String?
+  title            String
+  description      String?
+  category         String?
+  subCategory      String?
+  bidType          String?
+  ministry         String?
+  organization     String?
+  department       String?
+  buyerName        String?
+  buyerAddress     String?
+  consigneeState   String?
+  consigneeCity    String?
+  consigneeAddress String?
+  stateCode        String?
+  cityNormalized   String?
+  bidStartDate     DateTime?
+  bidEndDate       DateTime?
+  bidOpeningDate   DateTime?
+  bidValidityDays  Int?
+  estimatedValue   Decimal? @db.Decimal(14, 2)
+  quantity         String?
+  boqTitle         String?
+  sourceUrl        String?
+  status           TenderStatus @default(NEW)
+  workflowStatus   WorkflowStatus @default(UNDER_REVIEW)
+  isDemo           Boolean      @default(false)
+  duplicateOfId    String?
+  isDuplicate      Boolean      @default(false)
+  dupCluster       String?
+  contentHash      String?
+  sequence         Int          @default(1)
+  currentlyTracked Boolean      @default(true)
+  firstDetectedAt  DateTime     @default(now())
+  lastCheckedAt    DateTime?
+  lastModifiedAt   DateTime     @default(now())
+  notifSentAt      DateTime?
+  closedAt         DateTime?
+  scannedAt        DateTime?
+  regNo            String?
+  itemCount        Int?
+  statusAt         DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // New fields for release date tracking
+  publishedAt      DateTime?
+  bidStartAt       DateTime?
+  releaseDateSource String?
+
+  // Bid document (PDF) consignee enrichment
+  documentCheckedAt DateTime?
+
+  // Solution classification
+  solutions        TenderSolution[]
+
+  identicalTender  Tender?  @relation("TenderDuplicateCluster", fields: [duplicateOfId], references: [id])
+  duplicates       Tender[] @relation("TenderDuplicateCluster")
+  categories       TenderCategory[]
+  matches          TenderMatch[]
+  documents        TenderDocument[]
+  updates          TenderUpdate[]
+  userNotes        UserNote[]
+  tenderStars      TenderStar[]
+  notificationLogs   NotificationLog[]
+  notifications     Notification[]
+
+  @@index([status])
+  @@index([workflowStatus])
+  @@index([bidEndDate])
+  @@index([stateCode])
+  @@index([category])
+  @@index([firstDetectedAt])
+  @@index([createdAt])
+  @@index([isDemo])
+  @@index([isDuplicate])
+}
+
+model TenderCategory {
+  id         String   @id @default(cuid())
+  tenderId   String
+  categoryId String
+  matchedBy  String?
+
+  tender   Tender   @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([tenderId, categoryId])
+  @@index([categoryId])
+}
+
+model TenderDocument {
+  id        String   @id @default(cuid())
+  tenderId  String
+  name      String
+  url       String?
+  kind      String?
+  size      Int?
+  fetchedAt DateTime @default(now())
+
+  tender Tender @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+
+  @@index([tenderId])
+}
+
+model TenderUpdate {
+  id         String   @id @default(cuid())
+  tenderId   String
+  kind       UpdateKind @default(CREATED)
+  summary    String
+  changes    Json?
+  version    Int      @default(1)
+  detectedAt DateTime @default(now())
+
+  tender Tender @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+
+  @@index([tenderId])
+  @@index([detectedAt])
+}
+
+model TenderMatch {
+  id          String    @id @default(cuid())
+  tenderId    String
+  watchlistId String?
+  keywordId   String?
+  keyword     String
+  kind        MatchKind @default(CONTAINS)
+  where_      String?
+  negative    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  tender    Tender?   @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  watchlist Watchlist? @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  keywordRel Keyword? @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+
+  @@index([tenderId])
+  @@index([watchlistId])
+  @@index([keywordId])
+}
+
+// ---------------------------------------------------------------------------
+// Notifications
+// ---------------------------------------------------------------------------
+
+model UserNote {
+  id        String   @id @default(cuid())
+  tenderId  String
+  userId    String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tender Tender @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tenderId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  tenderId  String?
+  title     String
+  message   String
+  kind      String   @default("TENDER")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tender Tender? @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([tenderId])
+}
+
+model NotificationLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  tenderId  String?
+  channel   NotifyChannel @default(EMAIL)
+  status    NotifyStatus  @default(SENT)
+  subject   String?
+  body      String?
+  error     String?
+  createdAt DateTime @default(now())
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  Tender Tender? @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model NotificationSetting {
+  id        String   @id @default(cuid())
+  userId    String
+  channel   NotifyChannel @default(EMAIL)
+  enabled   Boolean       @default(true)
+  config    Json?
+  updatedAt DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, channel])
+}
+
+// ---------------------------------------------------------------------------
+// Operations / logs / settings
+// ---------------------------------------------------------------------------
+
+model SourceRun {
+  id                   String   @id @default(cuid())
+  sourceKey            String   @default("gem")
+  trigger              String   @default("SCHEDULED")
+  status               String   @default("RUNNING")
+  attempted            Int      @default(0)
+  fetched              Int      @default(0)
+  newCount             Int      @default(0)
+  updatedCount         Int      @default(0)
+  skippedCount         Int      @default(0)
+  errorCount           Int      @default(0)
+  sourceOk             Boolean  @default(false)
+  sourceBlocked        Boolean  @default(false)
+  startedAt            DateTime @default(now())
+  finishedAt           DateTime?
+  error                String?
+  details              Json?
+  consecutiveFailures  Int      @default(0)
+  nextRetryAt          DateTime?
+
+  @@index([status])
+  @@index([startedAt])
+}
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  level     LogLevel @default(INFO)
+  category  String?
+  message   String
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([level])
+  @@index([category])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String?
+  entityId  String?
+  meta      Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([action])
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model AppNotice {
+  id        String   @id @default(cuid())
+  message   String
+  level     String   @default("warning")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([active])
+}
+
+model TenderStar {
+  id        String   @id @default(cuid())
+  tenderId  String
+  userId    String
+  createdAt DateTime @default(now())
+
+  tender Tender @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenderId, userId])
+  @@index([userId])
+}

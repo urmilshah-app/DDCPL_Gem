@@ -1,0 +1,121 @@
+﻿Prisma schema loaded from prisma\schema.prisma
+prisma.cmd : 
+At line:1 char:1
++ & "D:\Gem_Website\node_modules\.bin\prisma.cmd" validate *> "D:\Gem_W ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Error: Prisma schema validation - (validate wasm)
+Error code: P1012
+error: Error validating: This line is not a valid field or attribute definition.
+  -->  prisma\schema.prisma:428
+   | 
+427 |   workflowStatus WorkflowStatus @default(UNDERVERVIEW)
+428 |   isDemo         Boolean  @default(falseσñ⌐Σ╣ï)
+429 | 
+   | 
+error: Field "location" is already defined on model "NegativeKeyword".
+  -->  prisma\schema.prisma:318
+   | 
+317 |   location WatchlistLocation? @relation(fields: [locationId], references: [id])
+318 |   location WatchlistLocation? @relation(fields: [watchlistLocationId], references: [id], 
+onDelete: Cascade)
+   | 
+error: Type "UserNote" is neither a built-in type, nor refers to another model, composite type, or 
+enum.
+  -->  prisma\schema.prisma:163
+   | 
+162 |   tenders    Tender[]      @relation("TenderCreatedBy")
+163 |   notes      UserNote[]
+   | 
+error: Type "TenderStar" is neither a built-in type, nor refers to another model, composite type, or 
+enum.
+  -->  prisma\schema.prisma:164
+   | 
+163 |   notes      UserNote[]
+164 |   stars      TenderStar[]
+   | 
+error: Type "Notification" is neither a built-in type, nor refers to another model, composite type, or 
+enum.
+  -->  prisma\schema.prisma:165
+   | 
+164 |   stars      TenderStar[]
+165 |   notifications Notification[]
+   | 
+error: Type "NotificationLog" is neither a built-in type, nor refers to another model, composite type, 
+or enum.
+  -->  prisma\schema.prisma:166
+   | 
+165 |   notifications Notification[]
+166 |   notifLogs  NotificationLog[]
+   | 
+error: Type "NotificationSetting" is neither a built-in type, nor refers to another model, composite 
+type, or enum.
+  -->  prisma\schema.prisma:167
+   | 
+166 |   notifLogs  NotificationLog[]
+167 |   settings   NotificationSetting[]
+   | 
+error: Type "AuditLog" is neither a built-in type, nor refers to another model, composite type, or 
+enum.
+  -->  prisma\schema.prisma:170
+   | 
+169 |   savedSearches SavedSearch[]
+170 |   auditLogs  AuditLog[]
+   | 
+error: Type "TenderMatch" is neither a built-in type, nor refers to another model, composite type, or 
+enum.
+  -->  prisma\schema.prisma:212
+   | 
+211 |   locations WatchlistLocation[]
+212 |   matches   TenderMatch[]
+   | 
+error: Type "TenderCategory" is neither a built-in type, nor refers to another model, composite type, 
+or enum.
+  -->  prisma\schema.prisma:284
+   | 
+283 |   tenders         Tender[] @relation("CategoryTenders")
+284 |   tenderCategories TenderCategory[]
+   | 
+error: Type "TenderMatch" is neither a built-in type, nor refers to another model, composite type, or 
+enum.
+  -->  prisma\schema.prisma:299
+   | 
+298 |   watchlists     WatchlistKeyword[]
+299 |   matches        TenderMatch[]
+   | 
+error: Type "TenderKeyword" is neither a built-in type, nor refers to another model, composite type, or 
+enum.
+  -->  prisma\schema.prisma:301
+   | 
+300 |   watcherRels    WatchlistLocation[]
+301 |   tenderRels     TenderKeyword[]
+   | 
+error: Type "TenderState" is neither a built-in type, nor refers to another model, composite type, or 
+enum.
+  -->  prisma\schema.prisma:337
+   | 
+336 |   tenders   Tender[]
+337 |   tendersRel TenderState[]
+   | 
+error: Type "TenderCity" is neither a built-in type, nor refers to another model, composite type, or 
+enum.
+  -->  prisma\schema.prisma:354
+   | 
+353 |   tenders    Tender[]
+354 |   tendersRel TenderCity[]
+   | 
+error: Error validating: The argument fields must refer only to existing fields. The following fields 
+do not exist in this model: watchlistLocationId
+  -->  prisma\schema.prisma:318
+   | 
+317 |   location WatchlistLocation? @relation(fields: [locationId], references: [id])
+318 |   location WatchlistLocation? @relation(fields: [watchlistLocationId], references: [id], 
+onDelete: Cascade)
+   | 
+
+Validation Error Count: 15
+[Context: validate]
+
+Prisma CLI Version : 5.22.0

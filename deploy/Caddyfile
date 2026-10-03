@@ -1,0 +1,20 @@
+# Caddy config — auto HTTPS via Let's Encrypt (DuckDNS subdomain)
+# {$DOMAIN} is injected from the environment (e.g. mygem.duckdns.org)
+
+{$DOMAIN} {
+	encode gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+	}
+
+	reverse_proxy app:3000
+
+	log {
+		output stdout
+		format json
+	}
+}

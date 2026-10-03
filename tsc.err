@@ -1,0 +1,2 @@
+﻿src/lib/keywords.ts(60,51): error TS1005: ',' expected.
+src/lib/keywords.ts(90,41): error TS1005: ';' expected.

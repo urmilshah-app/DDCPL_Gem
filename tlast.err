@@ -1,0 +1,28 @@
+﻿src/lib/auth.ts(5,20): error TS2724: '"./constants"' has no exported member named 'ROLE'. Did you mean 'Role'?
+src/lib/auth.ts(6,10): error TS2724: '"./env"' has no exported member named 'ENV'. Did you mean 'Env'?
+src/lib/auth.ts(43,31): error TS2304: Cannot find name 'Role'.
+src/lib/auth.ts(43,61): error TS2304: Cannot find name 'Role'.
+src/lib/auth.ts(49,34): error TS2304: Cannot find name 'Role'.
+src/lib/auth.ts(53,42): error TS2304: Cannot find name 'Role'.
+src/lib/auth.ts(59,9): error TS2304: Cannot find name 'Role'.
+src/lib/config/active.ts(6,24): error TS2307: Cannot find module '@/lib/db' or its corresponding type declarations.
+src/lib/config/active.ts(7,31): error TS2307: Cannot find module '@/lib/config/deformulations' or its corresponding type declarations.
+src/lib/config/active.ts(38,5): error TS2353: Object literal may only specify known properties, and 'enableEmail' does not exist in type 'AppConfig'.
+src/lib/config/defaults.ts(67,38): error TS2339: Property 'at24h' does not exist on type '{}'.
+src/lib/config/defaults.ts(68,38): error TS2339: Property 'at12h' does not exist on type '{}'.
+src/lib/config/defaults.ts(69,37): error TS2339: Property 'at3h' does not exist on type '{}'.
+src/lib/config/defaults.ts(72,33): error TS2339: Property 'email' does not exist on type '{}'.
+src/lib/config/defaults.ts(73,35): error TS2339: Property 'browser' does not exist on type '{}'.
+src/lib/config/defaults.ts(74,36): error TS2339: Property 'telegram' does not exist on type '{}'.
+src/lib/config/defaults.ts(75,36): error TS2339: Property 'whatsapp' does not exist on type '{}'.
+src/lib/geography.ts(1,47): error TS2724: '"./strings"' has no exported member named 'withoutStopWords'. Did you mean 'withoutStops'?
+src/lib/keywords.ts(1,35): error TS2724: '"./strings"' has no exported member named 'withoutStopWords'. Did you mean 'withoutStops'?
+src/lib/keywords.ts(2,10): error TS2305: Module '"./strings"' has no exported member 'PUNCTUATION_STOP_RE'.
+src/lib/keywords.ts(4,15): error TS2724: '"./strings"' has no exported member named 'NormalizedText'. Did you mean 'normalizeText'?
+src/lib/keywords.ts(15,9): error TS2304: Cannot find name 'MatchType'.
+src/lib/keywords.ts(96,3): error TS2300: Duplicate identifier 'negatives'.
+src/lib/keywords.ts(112,9): error TS2300: Duplicate identifier 'negatives'.
+src/lib/keywords.ts(122,51): error TS2345: Argument of type 'KeywordMatchResult' is not assignable to parameter of type 'string'.
+src/lib/keywords.ts(127,23): error TS2322: Type 'string[]' is not assignable to type 'KeywordMatchResult[]'.
+  Type 'string' is not assignable to type 'KeywordMatchResult'.
+

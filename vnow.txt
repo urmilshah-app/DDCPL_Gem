@@ -1,0 +1,33 @@
+﻿Prisma schema loaded from prisma\schema.prisma
+System.Management.Automation.RemoteException
+Error: Prisma schema validation - (validate wasm)
+Error code: P1012
+error: Type "UserNote" is neither a built-in type, nor refers to another model, composite type, or enum.
+  -->  prisma\schema.prisma:130
+   | 
+129 |   savedSearches        SavedSearch[]
+130 |   userNotes            UserNote[]
+   | 
+error: Type "TenderStar" is neither a built-in type, nor refers to another model, composite type, or enum.
+  -->  prisma\schema.prisma:131
+   | 
+130 |   userNotes            UserNote[]
+131 |   tenderStars          TenderStar[]
+   | 
+error: Type "UserNote" is neither a built-in type, nor refers to another model, composite type, or enum.
+  -->  prisma\schema.prisma:399
+   | 
+398 |   updates          TenderUpdate[]
+399 |   userNotes        UserNote[]
+   | 
+error: Type "TenderStar" is neither a built-in type, nor refers to another model, composite type, or enum.
+  -->  prisma\schema.prisma:400
+   | 
+399 |   userNotes        UserNote[]
+400 |   tenderStars      TenderStar[]
+   | 
+System.Management.Automation.RemoteException
+Validation Error Count: 4
+[Context: validate]
+System.Management.Automation.RemoteException
+Prisma CLI Version : 5.22.0

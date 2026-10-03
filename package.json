@@ -1,0 +1,59 @@
+{
+  "name": "gem-tender-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Independent GeM Tender Alert & Monitoring System — internal dashboard that monitors publicly accessible GeM ongoing bid listings.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "worker": "tsx scripts/worker.ts",
+    "scan": "tsx scripts/scan-once.ts",
+    "admin:pass": "tsx scripts/set-admin-password.ts",
+    "postinstall": "prisma generate"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "bcryptjs": "2.4.3",
+    "cheerio": "1.0.0",
+    "date-fns": "3.6.0",
+    "exceljs": "4.4.0",
+    "jose": "5.9.6",
+    "next": "14.2.30",
+    "node-cron": "3.0.3",
+    "pdf-lib": "1.17.1",
+    "pdf-parse": "^1.1.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "undici": "^6.28.1",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "2.4.6",
+    "@types/node": "20.17.24",
+    "@types/node-cron": "3.0.11",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "autoprefixer": "10.4.20",
+    "postcss": "8.4.49",
+    "prisma": "5.22.0",
+    "tailwindcss": "3.4.17",
+    "tsx": "4.19.2",
+    "typescript": "5.6.3",
+    "vitest": "2.1.9"
+  }
+}

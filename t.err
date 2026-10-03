@@ -1,0 +1,1 @@
+﻿src/lib/keywords.ts(71,15): error TS1121: Octal literals are not allowed. Use the syntax '0o0'.
