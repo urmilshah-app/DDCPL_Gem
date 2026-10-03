@@ -791,6 +791,12 @@ td .scan-message {
 .alert-error .detail-label {
   color: inherit;
 }
+.alert-ok {
+  border-color: #dcfce7;
+  background: #f0fdf4;
+  color: #15803d;
+  padding: 12px;
+}
 
 .empty {
   text-align: center;

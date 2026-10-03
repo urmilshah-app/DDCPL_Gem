@@ -17,7 +17,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        <Nav user={user ? { email: user.email, name: user.name } : null} />
+        <Nav user={user ? { email: user.email, name: user.name, role: user.role } : null} />
         <main className="page">{children}</main>
       </body>
     </html>

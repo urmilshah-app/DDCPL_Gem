@@ -9,8 +9,11 @@ const LINKS = [
   { href: '/solutions', label: 'Solutions' },
 ];
 
-export default function Nav({ user }: { user: { email: string; name: string } | null }) {
+export default function Nav({ user }: { user: { email: string; name: string; role?: string } | null }) {
   const pathname = usePathname();
+
+  const links =
+    user?.role === 'ADMIN' ? [...LINKS, { href: '/users', label: 'Users' }] : LINKS;
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
@@ -32,7 +35,7 @@ export default function Nav({ user }: { user: { email: string; name: string } | 
           <span className="brand-short">Monitor</span>
         </Link>
         <div className="site-links">
-          {LINKS.map((l) => {
+          {links.map((l) => {
             const active = isActive(l.href);
             return (
               <Link
